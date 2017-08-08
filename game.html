@@ -153,15 +153,21 @@ function component(width, height, color, x, y, type) {
         }
         return crash;
     }
-    this.passthru = function(otherobj) {
-        var lmaoleft = this.x;
-        var lmao2left = otherobj.x;
+    if (typeof(Worker) !== "undefined") {
 
-        var passtr = false;
-        if (lmaoleft == lmao2left) {
-            passtr = true;
+        this.passthru = function(otherobj) {
+            var lmaoleft = this.x;
+            var lmao2left = otherobj.x;
+
+            var passtr = false;
+            if (lmaoleft == lmao2left) {
+                passtr = true;
+            }
+            return passtr;
         }
-        return passtr;
+
+    } else {
+        alert("I SUCK")
     }
 }
 
@@ -206,12 +212,20 @@ function updateGameArea() {
     	myGamePiece.gravitySpeed = -4;
     }
 
-    for (i = 0; i < myObstacles.length; i += 1) {
-        if (myGamePiece.passthru(myObstacles[i])) {
-            myGameArea.lescore += (0.4/6);
-            return;
-        } 
+    if (typeof(Worker) !== "undefined") {
+
+        for (i = 0; i < myObstacles.length; i += 1) {
+
+            if (myGamePiece.passthru(myObstacles[i])) {
+                myGameArea.lescore += (0.4/6);
+                return;
+            } 
+        }
+
+    } else {
+        alert("I SUCK")
     }
+    
     
     myScore.text="GPA: " + myGameArea.lescore.toFixed(2);   
     myScore.update();
