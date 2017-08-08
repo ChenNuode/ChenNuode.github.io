@@ -19,8 +19,8 @@ var myGamePiece;
 var myObstacles = [];
 var myScore;
 var finalscore;
-var leheight = window.innerHeight - 50;
-var lewidth = window.innerWidth - 50;
+var leheight = window.innerHeight - 20;
+var lewidth = window.innerWidth - 22;
 var banana;
 var restartBtn;
 
@@ -50,8 +50,8 @@ function startGame() {
 var myGameArea = {
     canvas : document.createElement("canvas"),
     start : function() {
-        this.canvas.width = window.innerWidth - 50;
-        this.canvas.height = window.innerHeight - 50;
+        this.canvas.width = window.innerWidth - 20;
+        this.canvas.height = window.innerHeight - 22;
         
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
