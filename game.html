@@ -42,6 +42,7 @@ function startGame() {
     myGamePiece = new component(30, 30, "red", banana, leheight/2);
     myScore = new component("25px", "Courier", "black", lewidth - 140, 35, "text");
     myMusic = new sound("goodstuff.mp3");
+    myMusic.loop = true;
     myMusic.play();
     myGameArea.start();
 }
