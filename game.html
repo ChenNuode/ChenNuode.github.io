@@ -41,6 +41,8 @@ if (lewidth % 2 == 0) {
 function startGame() {
     myGamePiece = new component(30, 30, "red", banana, leheight/2);
     myScore = new component("25px", "Courier", "black", lewidth - 140, 35, "text");
+    myMusic = new sound("goodstuff.mp3");
+    myMusic.play();
     myGameArea.start();
 }
 
@@ -62,7 +64,14 @@ var myGameArea = {
         window.addEventListener('keyup', function (e) {
             myGameArea.keys[e.keyCode] = (e.type == "keydown");            
         })
-
+        window.addEventListener('touchstart', function (e) {
+            myGameArea.x = true;
+            myGameArea.y = true;
+        })
+        window.addEventListener('touchend', function (e) {
+            myGameArea.x = false;
+            myGameArea.y = false;
+        })
     }, 
     clear : function(){
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -161,6 +170,7 @@ function updateGameArea() {
     var x, height, gap, minHeight, maxHeight, minGap, maxGap;
     for (i = 0; i < myObstacles.length; i += 1) {
         if (myGamePiece.crashWith(myObstacles[i])) {
+        	myMusic.stop();
             myGameArea.stop();
             return;
         } 
@@ -189,9 +199,8 @@ function updateGameArea() {
     myGamePiece.speedX = 0;
     myGamePiece.speedY = 0;    
     
-    if (myGameArea.keys && myGameArea.keys[32]) {
+    if (myGameArea.keys && myGameArea.keys[32] || myGameArea.x && myGameArea.y) {
     	myGamePiece.gravitySpeed = -4;
-
     }
 
     for (i = 0; i < myObstacles.length; i += 1) {
@@ -207,7 +216,20 @@ function updateGameArea() {
     myGamePiece.update();
 }
 
-
+function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.play = function(){
+        this.sound.play();
+    }
+    this.stop = function(){
+        this.sound.pause();
+    }    
+}
 
 function everyinterval(n) {
     if ((myGameArea.frameNo / n) % 1 == 0) {return true;}
