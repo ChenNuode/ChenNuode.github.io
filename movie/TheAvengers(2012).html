@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Avengers(2012) movie</title>
+	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+</head>
+
+<!DOCTYPE html>
+<html>
+
+<style>
+.tooltip {
+    position: relative;
+    display: inline-block;
+
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 200px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    top: 16px;
+    left: 105%;
+}
+
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent black transparent transparent;
+}
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+.tooltiptext {
+	font-family:'Roboto', sans-serif;margin-left: 4%;
+}
+</style>
+
+
+<body style="background-color:rgba(211,211,211,0.2);">
+
+
+<div style= "font-family:'Roboto', sans-serif;margin-left: 4%;">
+	<div class="tooltip"><h1>The Avengers (2012)</h1>
+	  <span class="tooltiptext">Video sourced from elsewhere</span>
+	</div>
+</div>
+
+<center>
+	<video id="hi" style="width:90%;" controls autoplay>
+	  <source src=" https://putstream.com/embeds.php?code=yygpKSi20tc31ksq0EvKyU8vLsgv0UvOz9WvCoh3i8g2CnZ2dy5zzffJdDM2dLIwD0pNCtVNTDFKNnDK9gr0TdWNT0wtLs3NCfMy9dNNLfa2dPG1KK5IDPc38KwI8PZ2izCvKLfNNbQAAA" type="video/mp4">
+	  Your browser does not support HTML5 video.
+	</video>
+</center>
+
+<script type="text/javascript">
+
+
+document.getElementById("hi").addEventListener("click", function(){
+	
+    var myVideo = document.getElementById("hi");
+	if (myVideo.paused) {
+		myVideo.play(); 
+	}
+	else {
+		myVideo.pause();
+	}
+});
+
+
+
+
+</script>
+
+</body>
+</html>
