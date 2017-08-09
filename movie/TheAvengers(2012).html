@@ -3,6 +3,7 @@
 <head>
 	<title>Avengers(2012) movie</title>
 	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    
 </head>
 
 <!DOCTYPE html>
@@ -55,6 +56,7 @@
 	<div class="tooltip"><h1>The Avengers (2012)</h1>
 	  <span class="tooltiptext">Video sourced from elsewhere</span>
 	</div>
+    <a class="btn btn-danger" style="float: right;margin-right: 5%;margin-top: 35px;" href="project.html">Home</a>
 </div>
 
 <center>
@@ -66,10 +68,9 @@
 
 <script type="text/javascript">
 
+var myVideo = document.getElementById("hi");
 
 document.getElementById("hi").addEventListener("click", function(){
-	
-    var myVideo = document.getElementById("hi");
 	if (myVideo.paused) {
 		myVideo.play(); 
 	}
@@ -77,7 +78,6 @@ document.getElementById("hi").addEventListener("click", function(){
 		myVideo.pause();
 	}
 });
-
 
 
 
