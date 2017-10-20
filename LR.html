@@ -64,12 +64,14 @@ function myfunction2() {
   
   if (isNaN(test3) || isNaN(test4)) {
   	alert("please input only numbers")
+  } else if (test3 == "" || test4 == ""){
+  	alert("blank input")
   } else {
   	coordinatesX = [];
     coordinatesY = [];
     ctx.clearRect(0, 0,newestwidth, newestheight);
   	c.width  = test3; 
-	  c.height = test4;
+	c.height = test4;
     newestwidth = c.width
     newestheight = c.height
   }
@@ -89,7 +91,9 @@ function myfunction3() {
   } else {
   	if (test5 > newestwidth || test5 < 0 || test6 < 0 || test6 > newestheight) {
     	alert("Out of range, consider increasing canvas size")
-    } else {
+    } else if (test5 == "" || test6 == "") {
+  		alert("blank input")
+  	} else {
     	ctx.fillRect(test5,test6,5,5);
     	coordinatesX.push(test5);
     	coordinatesY.push(test6);
