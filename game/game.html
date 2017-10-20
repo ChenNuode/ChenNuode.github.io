@@ -7,14 +7,11 @@
 canvas {
     border:1px solid #d3d3d3;
     background-color: #f1f1f1;
-
 }
 </style>
 </head>
 <center><body onload="startGame()" style="text-align: center;">
 <script>
-
-
 var myGamePiece;
 var myObstacles = [];
 var myScore;
@@ -23,7 +20,6 @@ var leheight = window.innerHeight - 20;
 var lewidth = window.innerWidth - 22;
 var banana;
 var restartBtn;
-
 if (lewidth % 2 == 0) {
     if (Math.floor(lewidth / 5) % 2 == 0) {
         banana = Math.floor(lewidth / 5)
@@ -37,7 +33,6 @@ if (lewidth % 2 == 0) {
         banana = Math.floor(lewidth / 5) + 1
     }
 }
-
 function startGame() {
     myGamePiece = new component(30, 30, "red", banana, leheight/2);
     myScore = new component("25px", "Courier", "black", lewidth - 140, 35, "text");
@@ -46,7 +41,6 @@ function startGame() {
     myMusic.play();
     myGameArea.start();
 }
-
 var myGameArea = {
     canvas : document.createElement("canvas"),
     start : function() {
@@ -80,7 +74,6 @@ var myGameArea = {
     stop : function() {
         clearInterval(this.interval);
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
         finalscore = new component("20px", "Courier", "black", 10, leheight/2.2, "text");
         finalscore.text="YOUR FINAL GPA IS: " + myGameArea.lescore.toFixed(2);
         m = Math.floor(ctx.measureText(finalscore).width) + 70;
@@ -88,7 +81,6 @@ var myGameArea = {
         finalscore.update();
     }
 }
-
 function component(width, height, color, x, y, type) {
     this.gamearea = myGameArea;
     this.type = type;
@@ -98,10 +90,8 @@ function component(width, height, color, x, y, type) {
     this.speedY = 0;    
     this.x = x;
     this.y = y;
-
     this.gravity = 0.2;
     this.gravitySpeed = 0;
-
     this.update = function() {
         ctx = myGameArea.context;
         if (this.type == "text") {
@@ -154,35 +144,28 @@ function component(width, height, color, x, y, type) {
         return crash;
     }
     if (typeof(Worker) !== "undefined") {
-
         this.passthru = function(otherobj) {
             var lmaoleft = this.x;
             var lmao2left = otherobj.x;
-
             var passtr = false;
             if (lmaoleft == lmao2left) {
                 passtr = true;
             }
             return passtr;
         }
-
     } else {
         alert("I SUCK")
     }
 }
-
-
-
 function updateGameArea() {
     var x, height, gap, minHeight, maxHeight, minGap, maxGap;
     for (i = 0; i < myObstacles.length; i += 1) {
         if (myGamePiece.crashWith(myObstacles[i])) {
-        	myMusic.stop();
+            myMusic.stop();
             myGameArea.stop();
             return;
         } 
     }
-
     myGameArea.clear();
     myGameArea.frameNo += 1;
     if (myGameArea.frameNo == 1 || everyinterval(150)) {
@@ -209,19 +192,15 @@ function updateGameArea() {
     myGamePiece.speedY = 0;    
     
     if (myGameArea.keys && myGameArea.keys[32] || myGameArea.x && myGameArea.y) {
-    	myGamePiece.gravitySpeed = -4;
+        myGamePiece.gravitySpeed = -4;
     }
-
     if (typeof(Worker) !== "undefined") {
-
         for (i = 0; i < myObstacles.length; i += 1) {
-
             if (myGamePiece.passthru(myObstacles[i])) {
                 myGameArea.lescore += (0.4/6);
                 return;
             } 
         }
-
     } else {
         alert("I SUCK")
     }
@@ -232,7 +211,6 @@ function updateGameArea() {
     myGamePiece.newPos();    
     myGamePiece.update();
 }
-
 function sound(src) {
     this.sound = document.createElement("audio");
     this.sound.src = src;
@@ -247,12 +225,10 @@ function sound(src) {
         this.sound.pause();
     }    
 }
-
 function everyinterval(n) {
     if ((myGameArea.frameNo / n) % 1 == 0) {return true;}
     return false;
 }
-
 </script>
 </body></center>
 

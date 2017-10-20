@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>Linear Regression</h1>
+<h3>Use the plot below to find the line that best fits all the points.<br>Can be used to predict relationships between objects.</h2>
+<h4 style="color:grey;">Add points by clicking on the canvas or entering the coordinates before.</h3>
+<canvas id="myCanvas" width="1400" height="400" style="border:2px solid green;"></canvas><br>
+<button style="margin-bottom:10px;" onclick="myfunction()">Find line</button>
+<button style="margin-bottom:10px;" onclick="functionclear()">Clear canvas</button>
+
+<br>
+<div>
+	<input id="cwid" placeholder ="Canvas Width">
+	<input id="chei" placeholder ="Canvas Height">
+	<button onclick="myfunction2()">Change size</button>
+</div>
+<br>
+<div>
+	<input id="px" placeholder ="X-coordinate">
+	<input id="py" placeholder ="Y-coordinate">
+	<button onclick="myfunction3()">Insert point</button>
+<div>
+
+<script>
+var c = document.getElementById("myCanvas");
+c.addEventListener("mousedown", doMouseDown, false);
+
+var ctx = c.getContext("2d");
+
+var newestwidth = c.width;
+var newestheight = c.height;
+
+var coordinatesX = [];
+var coordinatesY = [];
+
+
+function findY(x,gradient,b) {
+    return gradient*x + b
+}
+
+function doMouseDown(event) {
+  cx = event.pageX - 13
+  cy = event.pageY - 190
+  
+  ctx.fillRect(cx,cy,5,5);
+  coordinatesX.push(cx);
+  coordinatesY.push(cy);
+}
+
+function functionclear() {
+  var test1 = c.height;
+  var test2 = c.width;
+  coordinatesX = [];
+  coordinatesY = [];
+  ctx.clearRect(0, 0,test2, test1);
+}
+
+function myfunction2() {
+  var width = document.getElementById('cwid');
+  var height = document.getElementById('chei');
+  test3 = Number(width.value);
+  test4 = Number(height.value);
+  
+  if (isNaN(test3) || isNaN(test4)) {
+  	alert("please input only numbers")
+  } else {
+  	coordinatesX = [];
+    coordinatesY = [];
+    ctx.clearRect(0, 0,newestwidth, newestheight);
+  	c.width  = test3; 
+	  c.height = test4;
+    newestwidth = c.width
+    newestheight = c.height
+  }
+}
+
+
+function myfunction3() {
+  newestwidth = c.width
+  newestheight = c.height
+  var coordx = document.getElementById('px');
+  var coordy = document.getElementById('py');
+  test5 = Number(coordx.value);
+  test6 = Number(coordy.value);
+  
+  if (isNaN(test5) || isNaN(test6)) {
+  	alert("please input numbers")
+  } else {
+  	if (test5 > newestwidth || test5 < 0 || test6 < 0 || test6 > newestheight) {
+    	alert("Out of range, consider increasing canvas size")
+    } else {
+    	ctx.fillRect(test5,test6,5,5);
+    	coordinatesX.push(test5);
+    	coordinatesY.push(test6);
+    }
+  }
+  
+}
+
+
+function myfunction() {
+  
+  ctx.clearRect(0, 0,newestwidth, newestheight);
+  var yave = 0;
+  var xave = 0;
+  var xsum = 0;
+  var ysum = 0;
+  
+  for (i = 0; i < coordinatesX.length; i++) {
+      x = coordinatesX[i]
+      y = coordinatesY[i]
+      xave += x
+      yave += y
+  }
+
+	xave = xave / coordinatesX.length
+	yave = yave / coordinatesY.length	
+
+  for (i = 0; i < coordinatesX.length; i++) {
+
+      xsum += (x - xave) * (y - yave)
+      ysum += (x - xave) * (x - xave)
+  }
+  
+  for (i = 0; i < coordinatesX.length; i++) {
+
+    ctx.fillRect(coordinatesX[i],coordinatesY[i],5,5);
+  }
+
+  var m = xsum / ysum
+  var c = yave - m * xave 
+  ctx.beginPath();  
+  ctx.lineWidth= 2;
+  ctx.strokeStyle="blue";
+
+  ctx.moveTo(0,findY(0,m,c));
+  ctx.lineTo(newestwidth,findY(newestwidth,m,c));
+  ctx.stroke();
+}
+
+
+
+</script>
+
+</body>
+</html>
