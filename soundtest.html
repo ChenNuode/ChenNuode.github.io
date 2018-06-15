@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Music-Visualiser</title>
+ 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+</head>
+<body onresize="resizefunction();">
+	<div class="container">
+		
+		<div class="row card-panel lighten-3">
+			<div class="col s9">
+				<h1 style="font-size:40px;">Hello!</h1>
+				<p>Welcome to the music visualiser, just allow access to the microphone and begin..</p>
+			</div>
+			<div class="col s2" style="padding-right: 20px;">
+				<i class="large material-icons">music_note</i>
+			</div>
+
+		</div>
+		<div class="row">
+			<div class="col s12 center">
+				<canvas id="canvas" style="width:100%;height: 0px; border-bottom: 0.1px solid rgb(230,230,230);"></canvas>
+				<p id="recordingsign" class="red-text left" style="display: none;margin: 5px;"><i class="material-icons" style="font-size: 12px;">fiber_manual_record</i>&nbsp;Recording&nbsp;</p>
+				<a id="staprecord" class="waves-effect waves-light red btn left" onclick="stopfunc();">Start Recording</a>
+			</div>
+		</div>
+	</div>
+
+</body>
+
+<script>
+
+	var canvas = document.getElementById('canvas');
+	var gotstop = true;
+  	var ctx, audioSrc, analyser, bigstream, WIDTH, HEIGHT
+	var canvasCtx = canvas.getContext('2d');
+
+	function bigfunction() {
+		navigator.mediaDevices.getUserMedia ({ audio: true })
+	  .then(function(stream) {
+	  	bigstream = stream
+	  	canvas.style.height = "50vh";
+	  	canvas.width = canvas.clientWidth;
+		canvas.height = canvas.clientHeight;
+		WIDTH = canvas.width;
+  		HEIGHT = canvas.height;
+	  	document.getElementById("recordingsign").style.display = "inline-block";
+		ctx = new AudioContext();		
+		audioSrc = ctx.createMediaStreamSource(stream);
+		analyser = ctx.createAnalyser();
+		analyser.minDecibels = -90;
+		analyser.maxDecibels = -10;
+		analyser.smoothingTimeConstant = 0.87;
+
+		audioSrc.connect(analyser);
+		analyser.fftSize = 256;
+		var frequencyData = new Uint8Array(analyser.frequencyBinCount);
+
+		canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
+
+
+		var barWidth, barHeight;
+
+		function renderFrame() {
+		   requestAnimationFrame(renderFrame);
+		    
+		   analyser.getByteFrequencyData(frequencyData);
+		   
+		  barWidth = Math.round(WIDTH/analyser.frequencyBinCount - 1);
+	      canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
+	      var x = 0;
+	      
+	      for(var i = 0; i < analyser.frequencyBinCount; i++) {
+	        barHeight = frequencyData[i];
+
+
+	        canvasCtx.fillStyle = "rgb(255,0,0," + (barHeight/90) + ")";
+	        canvasCtx.fillRect(x,HEIGHT-barHeight,barWidth,barHeight);
+
+	        x += barWidth + 1;
+		  }
+
+		}
+		renderFrame();
+
+	 })
+	 .catch(function(err) {
+	 	console.log('The following gUM error occured: ' + err);
+	 });
+	};
+
+	
+	function stopfunc() {
+		if (gotstop == true) {
+			bigfunction();
+			document.getElementById("staprecord").innerHTML = "Stop Recording";
+			gotstop = false;
+		} else {
+			var track = bigstream.getTracks()[0];
+			track.stop();
+			document.getElementById("recordingsign").style.display = "none";
+			canvas.style.height = "0px";
+			document.getElementById("staprecord").innerHTML = "Start Recording";
+			gotstop = true;
+		}
+	}
+
+	function resizefunction() {
+		canvas.width = canvas.clientWidth;
+		canvas.height = canvas.clientHeight;
+		WIDTH = canvas.width;
+	  	HEIGHT = canvas.height;
+	}
+	
+</script>
+</html>
