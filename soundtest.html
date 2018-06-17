@@ -27,6 +27,7 @@
 		<div class="row">
 			<div class="col s12 center">
 				<canvas id="canvas" style="width:100%;height: 0px; border-bottom: 0.1px solid rgb(230,230,230);"></canvas>
+				
 				<p id="recordingsign" class="red-text left" style="display: none;margin: 5px;"><i class="material-icons" style="font-size: 12px;">fiber_manual_record</i>&nbsp;Recording&nbsp;</p>
 				<a id="staprecord" class="waves-effect waves-light red btn left" onclick="stopfunc();">Start Recording</a>
 			</div>
@@ -39,7 +40,7 @@
 
 	var canvas = document.getElementById('canvas');
 	var gotstop = true;
-  	var ctx, audioSrc, analyser, bigstream, WIDTH, HEIGHT
+  	var ctx, audioSrc, analyser, bigstream, WIDTH, HEIGHT, barWidth, barHeight, bufferspace, frequencyData, mypause;
 	var canvasCtx = canvas.getContext('2d');
 
 	function bigfunction() {
@@ -47,10 +48,7 @@
 	  .then(function(stream) {
 	  	bigstream = stream
 	  	canvas.style.height = "50vh";
-	  	canvas.width = canvas.clientWidth;
-		canvas.height = canvas.clientHeight;
-		WIDTH = canvas.width;
-  		HEIGHT = canvas.height;
+
 	  	document.getElementById("recordingsign").style.display = "inline-block";
 		ctx = new AudioContext();		
 		audioSrc = ctx.createMediaStreamSource(stream);
@@ -61,30 +59,48 @@
 
 		audioSrc.connect(analyser);
 		analyser.fftSize = 256;
-		var frequencyData = new Uint8Array(analyser.frequencyBinCount);
+		frequencyData = new Uint8Array(analyser.frequencyBinCount);
 
 		canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
-
-
-		var barWidth, barHeight;
+		resizefunction();
+		mypause = false
 
 		function renderFrame() {
-		   requestAnimationFrame(renderFrame);
+			if (mypause == false) requestAnimationFrame(renderFrame);
 		    
 		   analyser.getByteFrequencyData(frequencyData);
 		   
-		  barWidth = Math.round(WIDTH/analyser.frequencyBinCount - 1);
-	      canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
+		  
+	      canvasCtx.clearRect(0, bufferspace, WIDTH, HEIGHT-2*bufferspace);
 	      var x = 0;
+	      var previousheight = 0
+	      var direction = 1
+	      var peakstart,peakarray = []
 	      
 	      for(var i = 0; i < analyser.frequencyBinCount; i++) {
 	        barHeight = frequencyData[i];
 
-
 	        canvasCtx.fillStyle = "rgb(255,0,0," + (barHeight/90) + ")";
-	        canvasCtx.fillRect(x,HEIGHT-barHeight,barWidth,barHeight);
+	        canvasCtx.fillRect(x,HEIGHT-barHeight-bufferspace,barWidth,barHeight);
 
 	        x += barWidth + 1;
+
+	        if (direction == 1 & barHeight - previousheight > 30) {
+	        	direction = 2
+	        	peakstart = i
+	        } else if (direction == 2 & previousheight - barHeight > 30) {
+	        	direction = 1
+	        	var temparray = frequencyData.slice(peakstart, i+1);
+	        	var peakindex = peakstart + temparray.indexOf(findpeak(peakstart,i+1));
+	        	peakarray.push(peakindex);
+	        }
+	        previousheight = barHeight
+		  }
+
+		  if (peakarray.length >= 4 & peakarray[1] - peakarray[0] > 12 & peakarray[peakarray.length-1] - peakarray[peakarray.length-2] > 12 & frequencyData[peakarray[2]] > 100) {
+		  	console.log("bell");
+		  } else if (peakarray.length <= 3 & frequencyData.slice(0,41).reduce(findsum)/40 > 100 & peakarray[0] < 15 & (peakarray[peakarray.length -1] > 75 & peakarray[peakarray.length -1] < 105 || peakarray[peakarray.length -1] > 40 & peakarray[peakarray.length -1] < 60 || peakarray[peakarray.length -1] < 35 & frequencyData[peakarray[0]] - frequencyData[peakarray[0]+10] < 70 & frequencyData.slice(28,44).reduce(findsum)/15 > 70)) {
+		  	console.log("carhorn")
 		  }
 
 		}
@@ -100,14 +116,14 @@
 	function stopfunc() {
 		if (gotstop == true) {
 			bigfunction();
-			document.getElementById("staprecord").innerHTML = "Stop Recording";
+			document.getElementById("staprecord").innerHTML = "Pause Recording";
 			gotstop = false;
 		} else {
+			mypause = true;
 			var track = bigstream.getTracks()[0];
 			track.stop();
 			document.getElementById("recordingsign").style.display = "none";
-			canvas.style.height = "0px";
-			document.getElementById("staprecord").innerHTML = "Start Recording";
+			document.getElementById("staprecord").innerHTML = "Resume Recording";
 			gotstop = true;
 		}
 	}
@@ -117,7 +133,45 @@
 		canvas.height = canvas.clientHeight;
 		WIDTH = canvas.width;
 	  	HEIGHT = canvas.height;
+	  	barWidth = WIDTH/analyser.frequencyBinCount - 1;
+	  	barWidth.toFixed(2);
+	  	bufferspace = Math.round(HEIGHT/20)
+	  	displaynum();
 	}
+
+	function rfsize(mytext) {
+		var fsize = 10
+	    canvasCtx.font= (fsize) + "px Arial";
+	    fsize = fsize/canvasCtx.measureText(mytext).width * barWidth;
+		return fsize.toFixed(1);
+	}
+
+	function displaynum() {
+		canvasCtx.fillStyle = "black";
+		var lenum = 0;
+
+		for(var i = 0; i < analyser.frequencyBinCount; i++) {
+			lastdigi = String(i).split("").pop();
+	       	canvasCtx.font = (rfsize(lastdigi)) + "px Arial";
+		   	canvasCtx.fillText(lastdigi, lenum, HEIGHT-bufferspace/3, barWidth);
+	       	lenum += barWidth + 1;
+		}
+		var tenum = 0;
+		for (var j = 0; j < 13; j++) {
+			canvasCtx.font= "13px Arial";
+			canvasCtx.fillText(String(j), tenum, bufferspace, Math.round(WIDTH/13));
+			tenum += Math.round(WIDTH/13);
+		}
+	}
+
+	function findpeak(fnum, snum) {
+		return Math.max(...frequencyData.slice(fnum,snum));
+	}
+
+	function findsum(total, num) {
+		return total + num;
+	}
+
 	
 </script>
 </html>
