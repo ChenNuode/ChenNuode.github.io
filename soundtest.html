@@ -133,10 +133,12 @@
 		canvas.height = canvas.clientHeight;
 		WIDTH = canvas.width;
 	  	HEIGHT = canvas.height;
-	  	barWidth = WIDTH/analyser.frequencyBinCount - 1;
-	  	barWidth.toFixed(2);
-	  	bufferspace = Math.round(HEIGHT/20)
-	  	displaynum();
+	  	if (gotstop == false) {
+	  		barWidth = WIDTH/analyser.frequencyBinCount - 1;
+		  	barWidth.toFixed(2);
+		  	bufferspace = Math.round(HEIGHT/20)
+		  	displaynum();
+	  	}
 	}
 
 	function rfsize(mytext) {
