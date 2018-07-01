@@ -99,10 +99,10 @@
 
 		  if (peakarray.length >= 4 & peakarray[1] - peakarray[0] > 12 & peakarray[peakarray.length-1] - peakarray[peakarray.length-2] > 12 & frequencyData[peakarray[2]] > 100) {
 		  	console.log("bell");
-		  } else if (peakarray.length <= 3 & frequencyData.slice(0,41).reduce(findsum)/40 > 100 & peakarray[0] < 15 & (peakarray[peakarray.length -1] > 75 & peakarray[peakarray.length -1] < 105 || peakarray[peakarray.length -1] > 40 & peakarray[peakarray.length -1] < 60 || peakarray[peakarray.length -1] < 35 & frequencyData[peakarray[0]] - frequencyData[peakarray[0]+10] < 70 & frequencyData.slice(28,44).reduce(findsum)/15 > 70)) {
+		  } else if (peakarray.length <= 3 & findpeak(0,25) - frequencyData[0] > 60 & findpeak(0,20) - average(20,30) > 40 & findlower(0,70,35) < 25 & findlower(75,120,40) > 40 & average(70,90) - average(90,120) < 25 & findpeak(90,120) < 50) {
 		  	console.log("carhorn")
+		  	
 		  }
-
 		}
 		renderFrame();
 
@@ -170,8 +170,21 @@
 		return Math.max(...frequencyData.slice(fnum,snum));
 	}
 
-	function findsum(total, num) {
-		return total + num;
+	function average(start,end) {
+		mycount = 0
+		for (i = 0; i < frequencyData.slice(start,end + 1).length; i++) {
+			mycount += frequencyData[start + i]
+		}
+		mycount = Math.round(mycount/frequencyData.slice(start,end + 1).length)
+		return mycount;
+	}
+
+	function findlower(start,end, num) {
+		mycount = 0
+		for (i = 0; i < frequencyData.slice(start,end + 1).length; i++) {
+			if (frequencyData[start + i] < num) mycount += 1;
+		}
+		return mycount;
 	}
 
 	
