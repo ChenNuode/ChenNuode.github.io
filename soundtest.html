@@ -9,7 +9,6 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
 </head>
 <body onresize="resizefunction();">
 	<div class="container">
@@ -33,7 +32,6 @@
 			</div>
 		</div>
 	</div>
-
 </body>
 
 <script>
@@ -42,8 +40,10 @@
 	var gotstop = true;
   	var ctx, audioSrc, analyser, bigstream, WIDTH, HEIGHT, barWidth, barHeight, bufferspace, frequencyData, mypause;
 	var canvasCtx = canvas.getContext('2d');
-
+	var bigalert = "";
+	var lego = true;
 	function bigfunction() {
+		
 		navigator.mediaDevices.getUserMedia ({ audio: true })
 	  .then(function(stream) {
 	  	bigstream = stream
@@ -98,10 +98,18 @@
 		  }
 
 		  if (peakarray.length >= 4 & peakarray[1] - peakarray[0] > 12 & peakarray[peakarray.length-1] - peakarray[peakarray.length-2] > 12 & frequencyData[peakarray[2]] > 100) {
-		  	console.log("bell");
-		  } else if (peakarray.length <= 3 & findpeak(0,25) - frequencyData[0] > 60 & findpeak(0,20) - average(20,30) > 40 & findlower(0,70,35) < 25 & findlower(75,120,40) > 40 & average(70,90) - average(90,120) < 25 & findpeak(90,120) < 50) {
-		  	console.log("carhorn")
 		  	
+		  	if (lego == true) {
+		  		lego = false;
+		  		mytoast = M.toast({html: 'Alert: Bicycle bell sound', displayLength: 1500, completeCallback: function(){lego = true;}, classes: "red-text"})
+		  	}
+
+		  } else if (peakarray.length <= 3 & findpeak(0,25) - frequencyData[0] > 60 & findpeak(0,20) - average(20,30) > 40 & findlower(0,70,35) < 25 & findlower(75,120,40) > 40 & average(70,90) - average(90,120) < 25 & findpeak(90,120) < 50) {
+		  	
+		  	if (lego == true) {
+		  		lego = false;
+		  		mytoast = M.toast({html: 'Alert: Car horn sound', displayLength: 1500, completeCallback: function(){lego = true;}, classes: "red-text"})
+		  	}
 		  }
 		}
 		renderFrame();
@@ -120,6 +128,7 @@
 			gotstop = false;
 		} else {
 			mypause = true;
+			
 			var track = bigstream.getTracks()[0];
 			track.stop();
 			document.getElementById("recordingsign").style.display = "none";
@@ -186,7 +195,6 @@
 		}
 		return mycount;
 	}
-
 	
 </script>
 </html>
