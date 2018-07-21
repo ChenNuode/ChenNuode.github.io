@@ -53,9 +53,9 @@
 		ctx = new AudioContext();		
 		audioSrc = ctx.createMediaStreamSource(stream);
 		analyser = ctx.createAnalyser();
-		analyser.minDecibels = -90;
+		analyser.minDecibels = -65;
 		analyser.maxDecibels = -10;
-		analyser.smoothingTimeConstant = 0.87;
+		analyser.smoothingTimeConstant = 0.7;
 
 		audioSrc.connect(analyser);
 		analyser.fftSize = 256;
@@ -76,7 +76,7 @@
 	      var previousheight = 0
 	      var direction = 1
 	      var peakstart,peakarray = []
-	      
+
 	      for(var i = 0; i < analyser.frequencyBinCount; i++) {
 	        barHeight = frequencyData[i];
 
@@ -97,6 +97,11 @@
 	        previousheight = barHeight
 		  }
 
+		  var index = peakarray.indexOf(4);
+    	  peakarray.splice(index, 1);
+    	  index = peakarray.indexOf(3);
+    	  peakarray.splice(index, 1);
+
 		  if (peakarray.length >= 4 & peakarray[1] - peakarray[0] > 12 & peakarray[peakarray.length-1] - peakarray[peakarray.length-2] > 12 & frequencyData[peakarray[2]] > 100) {
 		  	
 		  	if (lego == true) {
@@ -104,8 +109,9 @@
 		  		mytoast = M.toast({html: 'Alert: Bicycle bell sound', displayLength: 1500, completeCallback: function(){lego = true;}, classes: "red-text"})
 		  	}
 
-		  } else if (peakarray.length <= 3 & findpeak(0,25) - frequencyData[0] > 60 & findpeak(0,20) - average(20,30) > 40 & findlower(0,70,35) < 25 & findlower(75,120,40) > 40 & average(70,90) - average(90,120) < 25 & findpeak(90,120) < 50) {
+		  } else if (peakarray.length <= 3 & peakarray.length >= 1 & findpeak(0,25) - frequencyData[0] > 60 & findpeak(0,20) - average(20,30) > 50 & findlower(0,70,35) < 25 & findlower(0,70,35) > 5 & findlower(70,120,35) > 40 & average(70,90) - average(90,120) < 25 & findpeak(75,120) < 50) {
 		  	
+		  	console.log(peakarray)
 		  	if (lego == true) {
 		  		lego = false;
 		  		mytoast = M.toast({html: 'Alert: Car horn sound', displayLength: 1500, completeCallback: function(){lego = true;}, classes: "red-text"})
