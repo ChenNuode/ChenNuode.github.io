@@ -10,8 +10,29 @@ canvas {
 }
 </style>
 </head>
-<center><body onload="startGame()" style="text-align: center;">
+<center>
+
+<body style="text-align: center;">
+
+	<div id="intro" style="padding-top:100px;">
+		<img src="gamepic.png" style="width:50vw;">
+		<h1 style="margin-bottom: 5px;">Welcome to the GPA game</h1>
+		<p style="margin-top: 5px;margin-bottom: 10px;">Press enter to start & restart the game</p>
+		<button id="startbutton" onclick="startGame()" style="width: 100px;height: 25px;font-size: 15px;border-radius: 5px;background-color: rgb(0,0,0);color: orange;"><b>Start</b></button>
+
+		<script type="text/javascript">
+			var input = document.body;
+			input.addEventListener("keyup", function(event) {
+			  event.preventDefault();
+			  if (event.keyCode === 13) {
+			    document.getElementById("startbutton").click();
+			  }
+			});
+		</script>
+	</div>
+
 <script>
+
 var myGamePiece;
 var myObstacles = [];
 var myScore;
@@ -34,6 +55,9 @@ if (lewidth % 2 == 0) {
     }
 }
 function startGame() {
+	document.getElementById("intro").style.display = "none";
+	myObstacles = [];
+	myGameArea.stopother();
     myGamePiece = new component(30, 30, "red", banana, leheight/2);
     myScore = new component("25px", "Courier", "black", lewidth - 140, 35, "text");
     myMusic = new sound("goodstuff.mp3");
@@ -79,7 +103,14 @@ var myGameArea = {
         m = Math.floor(ctx.measureText(finalscore).width) + 70;
         finalscore.x = Math.floor((lewidth - m) /2);
         finalscore.update();
+    },
+    stopother : function() {
+    	if (typeof myMusic != 'undefined') {
+    		myMusic.stop()
+    	}
+        clearInterval(this.interval);
     }
+
 }
 function component(width, height, color, x, y, type) {
     this.gamearea = myGameArea;
